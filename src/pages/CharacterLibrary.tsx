@@ -57,6 +57,17 @@ const CharacterLibrary = () => {
     setLoading(true);
 
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast({
+          title: "Authentication Error",
+          description: "You must be logged in to save characters",
+          variant: "destructive",
+        });
+        return;
+      }
+
       if (editingId) {
         // Update existing character
         const { error } = await supabase
@@ -83,6 +94,7 @@ const CharacterLibrary = () => {
             {
               character_name: characterName,
               profile_text: profileText,
+              user_id: user.id,
             },
           ]);
 
